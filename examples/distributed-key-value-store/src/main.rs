@@ -174,8 +174,6 @@ async fn main() -> Result<(), Box<dyn Error>> {
                 SwarmEvent::ConnectionEstablished { peer_id, .. } => {
                     println!("Connection established to {}", peer_id);
                     //swarm.behaviour_mut().gossipsub.publish(gossipsub_topic.clone(), "Hello".as_bytes());
-                    //swarm.send_message(peer_id, "Hello".to_string()).unwrap();
-                             //thread::sleep(Duration::from_secs(1));
 
                 }
 
