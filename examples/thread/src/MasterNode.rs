@@ -35,7 +35,7 @@ enum MyBehaviourEvent {
     Mdns(mdns::Event),
 }
 
-pub async fn startNode() -> Result<(), Box<dyn Error>> {
+pub async fn start_node() -> Result<(), Box<dyn Error>> {
     //env_logger::init();
 
     let task_id = task::current().id();
@@ -254,7 +254,7 @@ fn handle_input_line(swarm: &mut Swarm<MyBehaviour>,  line: String) {
             //kademlia.send_message(peer, msg.as_bytes());
             //swarm.dial(peer).expect("Failed to dial peer.");
 
-            swarm.behaviour_mut().gossipsub.publish(gossipsub_topic.clone(), "hell0".as_bytes()).expect("TODO: panic message");
+            swarm.behaviour_mut().gossipsub.publish(gossipsub_topic.clone(), msg.as_bytes()).expect("TODO: panic message");
 
 
         }

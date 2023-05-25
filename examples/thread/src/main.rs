@@ -1,3 +1,4 @@
+
 mod MasterNode;
 mod SlaveNode;
 
@@ -8,8 +9,8 @@ use futures::{prelude::*, select};
 use async_std::{io, task};
 
 
-const masterSize: i32 = 1;
-const slaveSize: i32 = 2;
+const MASTER_SIZE: i32 = 1;
+const SLAVE_SIZE: i32 = 50;
 
 //async functions
 #[async_std::main]
@@ -34,13 +35,13 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
 
 //we can use the following to fork sync functions. but no async functions
-fn mainSyncSpawn(){
+fn main_sync_spawn(){
     println!("Hello, world!");
 
     let mut handles = Vec::new();
-    let forkSize = 3;
+    let fork_size = 3;
 
-    for i in 0..forkSize {
+    for i in 0..fork_size {
         let mut str = String::from("Rust");
         let handle = thread::spawn(move || {
             // 线程中需要执行的代码
@@ -79,10 +80,10 @@ fn handle_input_line( line: String) {
         Some("master") => {
             let mut localtasks = Vec::new();
 
-            for i in 0..masterSize {
+            for i in 0..MASTER_SIZE {
 
                 let task = task::spawn(async move   {
-                    let result = MasterNode::startNode().await;
+                    let result = MasterNode::start_node().await;
                 });
 
                 localtasks.push(task);
@@ -99,9 +100,9 @@ fn handle_input_line( line: String) {
         Some("slave") => {
             let mut localtasks = Vec::new();
 
-            for i in  0..slaveSize {
+            for i in  0..SLAVE_SIZE {
                 let task = task::spawn(async move  {
-                    let result = SlaveNode::startNode().await;
+                    let result = SlaveNode::start_node().await;
                 });
 
                 localtasks.push(task);

@@ -35,7 +35,7 @@ enum MyBehaviourEvent {
     Mdns(mdns::Event),
 }
 
-pub async fn startNode() -> Result<(), Box<dyn Error>> {
+pub async fn start_node() -> Result<(), Box<dyn Error>> {
 
     let task_id = task::current().id();
     println!("My task ID is {:?}", task_id);
