@@ -1,6 +1,6 @@
 
 
-use async_std::io;
+use async_std::{io, task};
 use futures::{prelude::*, select};
 use libp2p::core::upgrade::Version;
 use libp2p::kad::record::store::MemoryStore;
@@ -37,6 +37,11 @@ enum MyBehaviourEvent {
 
 pub async fn startNode() -> Result<(), Box<dyn Error>> {
     //env_logger::init();
+
+    let task_id = task::current().id();
+    println!("My task ID is {:?}", task_id);
+
+    println!("Start Master Node.........");
 
     // Create a random key for ourselves.
     let local_key = identity::Keypair::generate_ed25519();
@@ -88,7 +93,7 @@ pub async fn startNode() -> Result<(), Box<dyn Error>> {
         let mut  gossipub_instance =  gossipsub::Behaviour::new(
             gossipsub::MessageAuthenticity::Signed(local_key.clone()),
             gossipsub_config).expect("Valid configuration");
-        gossipub_instance.subscribe(&gossipsub_topic).expect("TODO: panic message, subscribe");;
+        gossipub_instance.subscribe(&gossipsub_topic).expect("TODO: panic message, subscribe");
 
         let mut behaviour = MyBehaviour {
             gossipsub: gossipub_instance,
@@ -112,7 +117,8 @@ pub async fn startNode() -> Result<(), Box<dyn Error>> {
         line = stdin.select_next_some() => handle_input_line(
                 &mut swarm,
                 line.expect("Stdin not to close")),
-        event = swarm.select_next_some() => match event {
+        event = swarm.select_next_some() => match event
+            {
 
 
             SwarmEvent::NewListenAddr { address, .. } => {

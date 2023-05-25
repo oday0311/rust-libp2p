@@ -1,51 +1,32 @@
 mod MasterNode;
 mod SlaveNode;
 
+use std::error::Error;
 use std::thread;
 use async_std::prelude::FutureExt;
-use async_std::task;
+use futures::{prelude::*, select};
+use async_std::{io, task};
 
 
+const masterSize: i32 = 1;
+const slaveSize: i32 = 2;
 
 //async functions
-fn main(){
+#[async_std::main]
+async fn main() -> Result<(), Box<dyn Error>> {
     //let rt = Runtime::new().unwrap();
-    let mut localtasks = Vec::new();
-    let masterSize = 2;
-    let slaveSize = 1;
 
+    // Read full lines from stdin
+    let mut stdin = io::BufReader::new(io::stdin()).lines().fuse();
 
-    for i in 0..masterSize {
+    // Kick it off.
+    loop {
+        println!("current msg is 1");
+        select! {
+            line = stdin.select_next_some() => handle_input_line(line.expect("read error")),
 
-        let task = task::spawn(async move  {
-            let result = MasterNode::startNode().await;
-        });
-
-        localtasks.push(task);
+        }
     }
-
-
-    for i in  0..slaveSize {
-        let task = task::spawn(async move  {
-            let result = SlaveNode::startNode().await;
-        });
-
-        localtasks.push(task);
-
-    }
-
-
-    // 等待所有线程执行完毕
-    for t in localtasks {
-        //handle.join().unwrap();
-        task::block_on(t);
-    }
-
-
-    task::block_on(async {
-        println!("Hello, world!  task ========");
-    });
-
 
 
 
@@ -87,4 +68,55 @@ fn mainSyncSpawn(){
 
 
 
+}
+
+
+fn handle_input_line( line: String) {
+
+
+    let mut args = line.split(' ');
+    match args.next() {
+        Some("master") => {
+            let mut localtasks = Vec::new();
+
+            for i in 0..masterSize {
+
+                let task = task::spawn(async move   {
+                    let result = MasterNode::startNode().await;
+                });
+
+                localtasks.push(task);
+            }
+
+            // 等待所有线程执行完毕
+            for t in localtasks {
+                //handle.join().unwrap();
+                task::block_on(t);
+            }
+
+
+        }
+        Some("slave") => {
+            let mut localtasks = Vec::new();
+
+            for i in  0..slaveSize {
+                let task = task::spawn(async move  {
+                    let result = SlaveNode::startNode().await;
+                });
+
+                localtasks.push(task);
+
+            }
+            // 等待所有线程执行完毕
+            for t in localtasks {
+                //handle.join().unwrap();
+                task::block_on(t);
+            }
+
+        }
+
+        _ => {
+            println!("Invalid input: please add type master or slave");
+        }
+    }
 }

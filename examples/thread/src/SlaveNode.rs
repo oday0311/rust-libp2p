@@ -1,6 +1,6 @@
 
 
-use async_std::io;
+use async_std::{io, task};
 use futures::{prelude::*, select};
 use libp2p::core::upgrade::Version;
 use libp2p::kad::record::store::MemoryStore;
@@ -37,6 +37,8 @@ enum MyBehaviourEvent {
 
 pub async fn startNode() -> Result<(), Box<dyn Error>> {
 
+    let task_id = task::current().id();
+    println!("My task ID is {:?}", task_id);
 
     println!("start slave node........");
     //env_logger::init();
