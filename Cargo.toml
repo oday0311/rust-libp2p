@@ -14,6 +14,7 @@ members = [
     "examples/relay-server",
     "examples/rendezvous",
     "examples/thread",
+    "examples/address-convert-tool",
     "identity",
     "interop-tests",
     "misc/allow-block-list",

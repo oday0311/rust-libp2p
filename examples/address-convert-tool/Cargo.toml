@@ -1,0 +1,9 @@
+[package]
+name = "address-convert-tool"
+version = "0.1.0"
+edition = "2021"
+publish = false
+license = "MIT"
+
+[dependencies]
+hex = "0.4.3"
